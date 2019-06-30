@@ -1,62 +1,43 @@
 # -*- coding: utf-8 -*-
-
-def move(now, goal, nodes, counter, history, result):
-    now = i
-    for i in range(len(nodes)):
-        if nodes[i] == 0:
-            continue
-        else:
-            next_node = i
-            print("node: {}, counter: {}".format(now, counter))
-            if counter == 3:
-                counter = 0
-                if now in history:
-                    # すでに移動済
-                    return
-
-                history.append(now)
-
-                if now == goal:
-                    # ゴールに到着
-                    result.append(len(history))
-                    print(history)
-                    return
-
-        move(now, goal, graph[now], counter+1, history, result)
+import heapq
 
 N, M = map(int, input().split())
+MAX = float("inf")
 
-graph = [[0 for i in range(N)] for j in range(N)]
+nodes = [[] for i in range(N+1)]
 
 for i in range(M):
     u, v = map(int, input().split())
-    graph[u-1][v-1] = 1
-    graph[v-1][u-1] = 1
+    u -= 1
+    v -= 1
+    nodes[u].append(v)
 
 S, T = map(int, input().split())
+S -= 1
+T -= 1
 
-# グラフを距離3に変換する
-for i in range(M):
-    for j in range(M):
-        if graph[i][j] == 0:
-            continue
-        else:
+# init
+d = [
+    [MAX for i in range(N)],
+    [MAX for i in range(N)],
+    [MAX for i in range(N)],
+]
+d[0][S] = 0
+queue = []
+heapq.heappush(queue, [0, 0, S])
 
+while queue:
+    p, m, n = heapq.heappop(queue)
+    if m == 0 and n == T:
+        print(int(p/3))
+        quit()
+    for to in nodes[n]:
+        if d[(m+1) % 3][to] > d[m][n] + 1:
+            d[(m+1) % 3][to] = d[m][n] + 1
+            heapq.heappush(queue, [
+                d[(m+1) % 3][to],
+                (m+1) % 3,
+                to
+            ])
 
-# history = []
-# result = []
-
-# # インデックスと合わせる
-# S -= 1
-# T -= 1
-
-# for nodes in graph:
-#     print(nodes)
-
-# now = S
-# counter = 0
-# history.append(now)
-# move(now, T, graph[now], counter, history, result)
-
-
-# print(result)
+print(-1)
