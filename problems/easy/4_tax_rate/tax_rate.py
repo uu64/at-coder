@@ -1,6 +1,3 @@
-from re import I
-
-
 N = int(input())
 
 v, m = divmod(N*100, 108)
